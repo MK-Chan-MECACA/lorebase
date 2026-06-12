@@ -1,0 +1,32 @@
+{
+  // Lorebase — rename `name` if you want a different workers.dev subdomain.
+  "name": "lorebase",
+  "compatibility_date": "2026-06-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "src/server/index.ts",
+  "assets": {
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*", "/images/*"]
+  },
+  "vars": {
+    // Claude model for the AI assistant. The API key is a secret:
+    //   npx wrangler secret put ANTHROPIC_API_KEY
+    "AI_MODEL": "claude-opus-4-8"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "lorebase",
+      // Replace after: npx wrangler d1 create lorebase
+      "database_id": "REPLACE_WITH_YOUR_D1_DATABASE_ID",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "IMAGES",
+      // Create with: npx wrangler r2 bucket create lorebase-images
+      "bucket_name": "lorebase-images"
+    }
+  ]
+}
