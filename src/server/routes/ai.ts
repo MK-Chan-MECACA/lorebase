@@ -284,14 +284,18 @@ export const aiRoutes = new Hono<{ Bindings: Env; Variables: AuthVars }>().post(
     await writer.write(encoder.encode(`data: ${JSON.stringify(e)}\n\n`));
   };
 
+  const model = c.env.AI_MODEL || "claude-opus-4-8";
+  // Adaptive thinking exists on Opus 4.6+/Sonnet 4.6+/Fable; older models (e.g. Haiku 4.5) reject it
+  const adaptive = /fable|opus-4-[6-9]|sonnet-4-[6-9]|opus-5|sonnet-5/.test(model);
+
   const run = async () => {
     let messages: Anthropic.MessageParam[] = history.map((m) => ({ role: m.role, content: m.content }));
     try {
       for (let i = 0; i < MAX_ITERATIONS; i++) {
         const stream = client.messages.stream({
-          model: c.env.AI_MODEL || "claude-opus-4-8",
+          model,
           max_tokens: 16000,
-          thinking: { type: "adaptive" },
+          ...(adaptive ? { thinking: { type: "adaptive" as const } } : {}),
           system,
           tools,
           messages,
