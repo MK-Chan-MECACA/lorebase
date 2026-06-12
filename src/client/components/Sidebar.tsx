@@ -3,7 +3,7 @@ import { NavLink, Link, useNavigate } from "react-router-dom";
 import { useAuth, canEdit } from "../auth";
 import { useData } from "../data";
 
-export default function Sidebar() {
+export default function Sidebar({ open = false }: { open?: boolean }) {
   const { user } = useAuth();
   const { categories, docs } = useData();
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar${open ? " open" : ""}`}>
       <div className="sidebar-tools">
         <input
           type="search"
